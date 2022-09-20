@@ -1,3 +1,3 @@
-# 超级扩展工具包
+# Super Expansion Kit
 
-一个C#扩展方法的工具包，帮助你更好的开发应用程序。
+A toolkit of C# extension methods to help you develop better applications.
