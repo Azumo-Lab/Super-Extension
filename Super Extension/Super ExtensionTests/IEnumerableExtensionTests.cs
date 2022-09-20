@@ -36,12 +36,20 @@ namespace SuperExtension.Tests
             Strs.Add("Hello");
             Strs.Add("VVVVV");
 
+            File.Delete("TestListSaveToFile.txt");
+            File.Delete("Test");
+
             Strs.SaveToFile("TestListSaveToFile.txt", Encoding.UTF8);
+            Strs.SaveToFile("Test");
 
             var fileContext = File.ReadAllLines("TestListSaveToFile.txt").Where(x => !string.IsNullOrEmpty(x)).ToList();
+            var fileContextTest = File.ReadAllLines("TestListSaveToFile.txt").Where(x => !string.IsNullOrEmpty(x)).ToList();
 
             Assert.IsTrue(fileContext[0] == Strs[0]);
             Assert.IsTrue(fileContext.Count == Strs.Count);
+
+            Assert.IsTrue(fileContextTest[0] == Strs[0]);
+            Assert.IsTrue(fileContextTest.Count == Strs.Count);
         }
 
         [TestMethod()]

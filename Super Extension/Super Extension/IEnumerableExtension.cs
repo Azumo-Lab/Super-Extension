@@ -22,28 +22,33 @@ namespace SuperExtension
         }
 
         /// <summary>
-        /// 
+        /// 将数据写入文件
         /// </summary>
         /// <param name="source"></param>
         /// <param name="path"></param>
         /// <param name="encoding"></param>
         public static void SaveToFile(this IEnumerable<string> source, string path, Encoding encoding)
         {
-            string DirPath = Path.GetDirectoryName(path);
-            if (!DirPath.IsNullOrEmptyOrWhiteSpace())
-                Directory.CreateDirectory(DirPath);
+            FileExtension.CreateDir(path);
 
-            using (FileStream fs = new FileStream(path, FileMode.OpenOrCreate))
+            using (StreamWriter sw = FileExtension.CreateStreamWriter(path, encoding))
             {
-                using (StreamWriter sw = new StreamWriter(fs, encoding))
-                {
-                    source.ForEach(x => sw.WriteLine(x));
-                }
+                source.ForEach(x => sw.WriteLine(x));
             }
         }
 
         /// <summary>
-        /// 
+        /// 将数据写入指定文件
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="path"></param>
+        public static void SaveToFile(this IEnumerable<string> source, string path)
+        {
+            source.SaveToFile(path, Encoding.UTF8);
+        }
+
+        /// <summary>
+        /// 循环遍历
         /// </summary>
         /// <param name="souce"></param>
         /// <param name="action"></param>

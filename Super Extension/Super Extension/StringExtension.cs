@@ -81,19 +81,11 @@ namespace SuperExtension
         /// <exception cref="ArgumentNullException"></exception>
         public static void SaveToFile(this string str, string Path, Encoding encoding)
         {
-            if(Path.IsNullOrEmptyOrWhiteSpace())
-                throw new ArgumentNullException(nameof(Path));
+            FileExtension.CreateDir(Path);
 
-            string DirPath = System.IO.Path.GetDirectoryName(Path);
-            if (!DirPath.IsNullOrEmptyOrWhiteSpace())
-                Directory.CreateDirectory(DirPath);
-            
-            using (FileStream fs = new FileStream(Path, FileMode.OpenOrCreate))
+            using (StreamWriter sw = FileExtension.CreateStreamWriter(Path, encoding))
             {
-                using (StreamWriter sw = new StreamWriter(fs, encoding))
-                {
-                    sw.Write(str ?? string.Empty);
-                }
+                sw.Write(str ?? string.Empty);
             }
         }
 
@@ -117,6 +109,125 @@ namespace SuperExtension
         public static string EncodingChange(this string str, Encoding InputEncoding, Encoding OutPutEncoing)
         {
             return OutPutEncoing.GetString(InputEncoding.GetBytes(str));
+        }
+
+        /// <summary>
+        /// 如果为空，返回默认字符串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="defaultStr"></param>
+        /// <returns></returns>
+        public static string DefaultString(this string str, string defaultStr)
+        {
+            return str ?? defaultStr;
+        }
+
+        /// <summary>
+        /// 如果为空，返回默认字符串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="defaultStr"></param>
+        /// <returns></returns>
+        public static string DefaultString(this string str)
+        {
+            return str.DefaultString(string.Empty);
+        }
+
+        /// <summary>
+        /// 如果满足条件，则返回默认字符串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="func"></param>
+        /// <param name="defaultStr"></param>
+        /// <returns></returns>
+        public static string DefaultString(this string str, Func<string, bool> func, string defaultStr)
+        {
+            return func.Invoke(str) ? defaultStr : str;
+        }
+
+        /// <summary>
+        /// 将字符串反转
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string Reverse(this string str)
+        {
+            IEnumerable<char> reverseStr = str.Reverse<char>();
+            return string.Join(string.Empty, reverseStr);
+        }
+
+        /// <summary>
+        /// 寻找不同字符串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="s2"></param>
+        /// <returns></returns>
+        public static int DifferenceAt(this string str,  string s2)
+        {
+            if (str == null || s2 == null)
+                return -1;
+
+            int i;
+            for (i = 0; (i < str.Length) && (i < s2.Length); ++i)
+            {
+                if (str[i] != s2[i])
+                {
+                    break;
+                }
+            }
+            if ((i < s2.Length) || (i < str.Length))
+            {
+                return i;
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// 寻找不同字符串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="s2"></param>
+        /// <returns></returns>
+        public static string Difference(this string str, string s2)
+        {
+            int at = DifferenceAt(str, s2);
+            if (at == -1)
+            {
+                return string.Empty;
+            }
+            return s2.Substring(at);
+        }
+
+        /// <summary>
+        /// 首字母小写
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string LowerFirstLetter(this string str)
+        {
+            if (str == null || str == string.Empty)
+                return string.Empty;
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(char.ToLower(str.First()));
+            sb.Append(string.Join(string.Empty, str.Skip(1)));
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 首字母大写
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string UpperFirstLetter(this string str)
+        {
+            if (str == null || str == string.Empty)
+                return string.Empty;
+            
+            StringBuilder sb = new StringBuilder();
+            sb.Append(char.ToUpper(str.First()));
+            sb.Append(string.Join(string.Empty, str.Skip(1)));
+            return sb.ToString();
         }
     }
 }
